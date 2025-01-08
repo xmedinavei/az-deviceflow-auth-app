@@ -1,13 +1,13 @@
-# Azure AD Authentication with MSAL in Python (Dockerized)
+# Azure AD Authentication with MSAL and Microsoft Graph in Python (Dockerized)
 
-This project demonstrates Azure Active Directory (Azure AD) authentication using the Microsoft Authentication Library (MSAL) in a containerized Python console application. The app authenticates users and displays their profile information and upcoming calendar events.
+This project demonstrates Azure Active Directory (Azure AD) authentication using the Microsoft Authentication Library (MSAL) in a containerized Python console application. The app authenticates users, interacts with Microsoft Graph API to manage user data and calendar events.
 
 ## What Does This App Do?
 
 1. Authenticates user via Device Code Flow
 2. Retrieves user's profile information (display name)
 3. Fetches up to 5 upcoming calendar events
-4. Displays authentication tokens
+4. Creates a new calendar event automatically
 
 Example output:
 
@@ -26,6 +26,12 @@ Your upcoming calendar events:
    Organizer: Bob Johnson
    Start: 2023-12-02T14:00:00
    End:   2023-12-02T15:00:00
+
+Your meeting was created with the following details:
+Subject: Study for the AZ-204 exam
+Location: Wherever you are
+Start: 2023-12-01T15:05:00
+End: 2023-12-01T15:35:00
 ```
 
 ## Prerequisites
@@ -57,8 +63,8 @@ After registration:
 3. Set API Permissions:
    - Go to "API permissions"
    - Add "Microsoft Graph" permissions:
-     - User.Read
-     - Calendars.Read
+     - User.Read (for profile access)
+     - Calendars.ReadWrite (for viewing and creating calendar events)
    - Click "Grant admin consent"
 
 ## Quick Start
@@ -103,6 +109,27 @@ After registration:
 ├── Dockerfile        # Container configuration
 └── README.md         # Documentation
 ```
+
+## Microsoft Graph Features
+
+The application demonstrates several Microsoft Graph API capabilities:
+
+1. **User Profile Access**
+
+   - Fetches user's display name and basic information
+   - Uses Microsoft Graph `/me` endpoint
+
+2. **Calendar Management**
+
+   - Lists upcoming calendar events (up to 5)
+   - Creates new calendar events automatically
+   - Supports custom event duration
+   - Uses Microsoft Graph `/me/events` endpoints
+
+3. **Authentication**
+   - Device code flow for headless authentication
+   - Token management and caching
+   - Secure scope handling
 
 ## Development Notes
 
