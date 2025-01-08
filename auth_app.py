@@ -3,141 +3,175 @@ import msal
 import requests
 from datetime import datetime, timedelta
 import pytz
+import logging
+from typing import Dict, List, Optional
+from dataclasses import dataclass
 
-# Retrieve CLIENT_ID and TENANT_ID from environment variables
-client_id = os.environ.get("CLIENT_ID")
-tenant_id = os.environ.get("TENANT_ID")
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-if not client_id or not tenant_id:
-    raise ValueError("CLIENT_ID and TENANT_ID environment variables must be set.")
+@dataclass
+class GraphConfig:
+    client_id: str
+    tenant_id: str
+    scopes: List[str]
+    
+    @classmethod
+    def from_env(cls) -> 'GraphConfig':
+        client_id = os.environ.get("CLIENT_ID")
+        tenant_id = os.environ.get("TENANT_ID")
+        
+        if not client_id or not tenant_id:
+            raise ValueError("CLIENT_ID and TENANT_ID environment variables must be set.")
+            
+        return cls(
+            client_id=client_id,
+            tenant_id=tenant_id,
+            scopes=["User.Read", "Calendars.ReadWrite"]
+        )
 
-# Build the authority URL
-authority = f"https://login.microsoftonline.com/{tenant_id}"
+class GraphClient:
+    def __init__(self, config: GraphConfig):
+        self.config = config
+        self.app = msal.PublicClientApplication(
+            client_id=config.client_id,
+            authority=f"https://login.microsoftonline.com/{config.tenant_id}"
+        )
+        self.access_token: Optional[str] = None
+        
+    def authenticate(self) -> bool:
+        try:
+            flow = self.app.initiate_device_flow(scopes=self.config.scopes)
+            
+            if "user_code" not in flow:
+                raise ValueError(f"Failed to create device flow. Error: {flow}")
+                
+            print(flow["message"])
+            result = self.app.acquire_token_by_device_flow(flow)
+            
+            if "access_token" in result:
+                self.access_token = result["access_token"]
+                return True
+            else:
+                logger.error(f"Authentication failed: {result.get('error')} - {result.get('error_description')}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Authentication error: {str(e)}")
+            return False
+            
+    def get_user_profile(self) -> Optional[Dict]:
+        if not self.access_token:
+            return None
+            
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        response = requests.get("https://graph.microsoft.com/v1.0/me", headers=headers)
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            logger.error(f"Error fetching user profile: {response.text}")
+            return None
+            
+    def get_calendar_events(self, limit: int = 5) -> List[Dict]:
+        if not self.access_token:
+            return []
+            
+        headers = {"Authorization": f"Bearer {self.access_token}"}
+        events_url = (
+            "https://graph.microsoft.com/v1.0/me/events"
+            f"?$select=subject,organizer,start,end"
+            f"&$top={limit}"
+            "&$orderby=start/dateTime ASC"
+        )
+        
+        response = requests.get(events_url, headers=headers)
+        
+        if response.status_code == 200:
+            return response.json().get("value", [])
+        else:
+            logger.error(f"Error fetching events: {response.text}")
+            return []
+            
+    def create_calendar_event(self, subject: str, duration_minutes: int = 30) -> Optional[Dict]:
+        if not self.access_token:
+            return None
+            
+        try:
+            # Use UTC for consistency
+            start_time = datetime.now(pytz.UTC) + timedelta(minutes=5)
+            end_time = start_time + timedelta(minutes=duration_minutes)
+            
+            event = {
+                "subject": subject,
+                "body": {
+                    "contentType": "HTML",
+                    "content": "I've heard there's a good book from Packt for that."
+                },
+                "start": {
+                    "dateTime": start_time.isoformat(),
+                    "timeZone": "UTC"
+                },
+                "end": {
+                    "dateTime": end_time.isoformat(),
+                    "timeZone": "UTC"
+                },
+                "location": {
+                    "displayName": "Wherever you are"
+                }
+            }
+            
+            headers = {"Authorization": f"Bearer {self.access_token}"}
+            response = requests.post(
+                "https://graph.microsoft.com/v1.0/me/events",
+                headers=headers,
+                json=event
+            )
+            
+            if response.status_code == 201:
+                return response.json()
+            else:
+                logger.error(f"Error creating event: {response.text}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Error creating calendar event: {str(e)}")
+            return None
 
-# Scopes we want to request
-scopes = ["User.Read", "Calendars.Read"]
-
-# Initialize the PublicClientApplication
-app = msal.PublicClientApplication(
-    client_id=client_id,
-    authority=authority
-)
-
-# Initiate the device flow (headless auth)
-flow = app.initiate_device_flow(scopes=scopes)
-
-# Check if we actually got a device code; if not, something failed
-if "user_code" not in flow:
-    raise ValueError(
-        "Failed to create device flow. Error: %s" % str(flow)
-    )
-
-print(flow["message"])  # Instructions for the user to go to https://microsoft.com/devicelogin
-
-# Acquire the token by completing the device code flow
-result = app.acquire_token_by_device_flow(flow)
-
-def create_calendar_event():
-    # Get local timezone
-    local_tz = datetime.now().astimezone().tzinfo
-    start_time = datetime.now() + timedelta(minutes=5)
-    end_time = start_time + timedelta(minutes=30)
-
-    event = {
-        "subject": "Study for the AZ-204 exam",
-        "body": {
-            "contentType": "HTML",
-            "content": "I've heard there's a good book from Packt for that."
-        },
-        "start": {
-            "dateTime": start_time.strftime("%Y-%m-%dT%H:%M:%S"),
-            "timeZone": str(local_tz)
-        },
-        "end": {
-            "dateTime": end_time.strftime("%Y-%m-%dT%H:%M:%S"),
-            "timeZone": str(local_tz)
-        },
-        "location": {
-            "displayName": "Wherever you are"
-        }
-    }
-    return event
-
-if "access_token" in result:
-    access_token = result["access_token"]
-    headers = {"Authorization": f"Bearer {access_token}"}
-
-    # ----------------------------------
-    # 1. Get user profile (display name)
-    # ----------------------------------
-    graph_user_url = "https://graph.microsoft.com/v1.0/me"
-    user_resp = requests.get(graph_user_url, headers=headers)
-
-    if user_resp.status_code == 200:
-        user_data = user_resp.json()
-        display_name = user_data.get("displayName", "Unknown")
-        print(f"\nWelcome, {display_name}!\n")
-    else:
-        print("Error fetching user profile:", user_resp.text)
-
-    # ---------------------------
-    # 2. Get upcoming calendar events
-    # ---------------------------
-    # Retrieve up to 5 upcoming events
-    events_url = (
-        "https://graph.microsoft.com/v1.0/me/events"
-        "?$select=subject,organizer,start,end"
-        "&$top=5"
-        "&$orderby=start/dateTime ASC"
-    )
-    events_resp = requests.get(events_url, headers=headers)
-
-    if events_resp.status_code == 200:
-        events_data = events_resp.json()
-        events = events_data.get("value", [])
-
-        if events:
+def main():
+    try:
+        config = GraphConfig.from_env()
+        client = GraphClient(config)
+        
+        if not client.authenticate():
+            return
+            
+        # Get user profile
+        if profile := client.get_user_profile():
+            print(f"\nWelcome, {profile.get('displayName', 'Unknown')}!\n")
+            
+        # Get calendar events
+        if events := client.get_calendar_events():
             print("Your upcoming calendar events:")
             for idx, event in enumerate(events, start=1):
-                subject = event.get("subject", "No subject")
-                organizer_name = event["organizer"]["emailAddress"].get("name", "Unknown")
-                start_time = event["start"].get("dateTime")
-                end_time = event["end"].get("dateTime")
-
-                print(f"{idx}. Subject: {subject}")
-                print(f"   Organizer: {organizer_name}")
-                print(f"   Start: {start_time}")
-                print(f"   End:   {end_time}\n")
+                print(f"{idx}. Subject: {event.get('subject', 'No subject')}")
+                print(f"   Organizer: {event['organizer']['emailAddress'].get('name', 'Unknown')}")
+                print(f"   Start: {event['start'].get('dateTime')}")
+                print(f"   End:   {event['end'].get('dateTime')}\n")
         else:
             print("No upcoming events found.")
-    else:
-        print("Error fetching events:", events_resp.text)
-
-    # Create calendar event
-    try:
-        event_data = create_calendar_event()
-        events_url = "https://graph.microsoft.com/v1.0/me/events"
-        event_resp = requests.post(events_url, headers=headers, json=event_data)
-
-        if event_resp.status_code == 201:
-            created_event = event_resp.json()
+            
+        # Create new event
+        if created_event := client.create_calendar_event("Study for the AZ-204 exam"):
             print("Your meeting was created with the following details:")
             print(f"Subject: {created_event['subject']}")
             print(f"Location: {created_event['location']['displayName']}")
             print(f"Start: {created_event['start']['dateTime']}")
             print(f"End: {created_event['end']['dateTime']}\n")
-        else:
-            print("Error creating event:", event_resp.text)
+            
+    except Exception as e:
+        logger.error(f"Application error: {str(e)}")
 
-    except Exception as ex:
-        print(f"Error creating calendar event: {str(ex)}")
-
-    # Optional: Print the tokens (like in your .NET example)
-    print("ID Token:\n", result.get("id_token"), "\n")
-    print("Access Token:\n", access_token, "\n")
-
-else:
-    # If acquire_token_by_device_flow failed
-    print("Failed to acquire token.")
-    print(f"Error: {result.get('error')}")
-    print(f"Description: {result.get('error_description')}")
+if __name__ == "__main__":
+    main()
