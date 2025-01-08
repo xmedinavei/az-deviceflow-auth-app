@@ -162,4 +162,17 @@ The application demonstrates several Microsoft Graph API capabilities:
 - The .env file is excluded from Docker builds
 - Public client flow is secured by Azure AD's device code flow
 
-For more details, see [MSAL Python Documentation](https://github.com/AzureAD/microsoft-authentication-library-for-python)
+## 🤝 Let's Connect!
+
+Are you passionate about Cloud Infrastructure and Azure solutions? Let's connect and discuss more about:
+
+- Cloud Architecture
+- Azure Development
+- Identity & Security
+- Infrastructure as Code
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/xmedinavei)
+
+> 💡 Feel free to reach out if you have questions about this project or want to discuss cloud infrastructure solutions!
+
+For more details about MSAL, see [MSAL Python Documentation](https://github.com/AzureAD/microsoft-authentication-library-for-python)
