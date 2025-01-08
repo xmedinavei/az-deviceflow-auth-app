@@ -1,13 +1,15 @@
-# Azure AD Authentication with MSAL and Microsoft Graph in Python (Dockerized)
+# 🔐 Azure AD Authentication with MSAL and Microsoft Graph in Python
+
+> 🐳 Fully containerized solution for secure Microsoft Graph integration
 
 This project demonstrates Azure Active Directory (Azure AD) authentication using the Microsoft Authentication Library (MSAL) in a containerized Python console application. The app authenticates users, interacts with Microsoft Graph API to manage user data and calendar events.
 
-## What Does This App Do?
+## ✨ Features
 
-1. Authenticates user via Device Code Flow
-2. Retrieves user's profile information (display name)
-3. Fetches up to 5 upcoming calendar events
-4. Creates a new calendar event automatically
+1. 🔑 Secure device code authentication flow
+2. 👤 User profile information retrieval
+3. 📅 Calendar management (view & create events)
+4. 🐳 Docker containerization for easy deployment
 
 Example output:
 
@@ -34,7 +36,32 @@ Start: 2023-12-01T15:05:00
 End: 2023-12-01T15:35:00
 ```
 
-## Prerequisites
+## 🚀 Quick Start
+
+1. **Clone and Setup**:
+
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder>
+   ```
+
+2. **Set Up Environment**:
+
+   > ⚠️ **Critical Step**: Create `.env` from template and add your Azure credentials!
+
+   ```env
+   CLIENT_ID=your-client-id-from-azure-portal
+   TENANT_ID=your-tenant-id-from-azure-portal
+   ```
+
+3. **Run with Docker**:
+
+   ```bash
+   docker build -t azure-ad-auth-demo .
+   docker run --rm -it --env-file .env azure-ad-auth-demo
+   ```
+
+## 📋 Prerequisites
 
 ### Azure AD App Registration
 
@@ -80,30 +107,6 @@ After registration:
    ```
 
 > ⚠️ **Important**: The `.env` file is required for the application to work. Without proper credentials, the authentication will fail.
-
-## Quick Start
-
-1. **Clone and Setup**:
-
-   ```bash
-   git clone <repository-url>
-   cd <repository-folder>
-   ```
-
-2. **Configure Environment**:
-   Create a `.env` file with your values:
-
-   ```env
-   CLIENT_ID=your-client-id-from-azure-portal
-   TENANT_ID=your-tenant-id-from-azure-portal
-   ```
-
-3. **Build and Run**:
-
-   ```bash
-   docker build -t azure-ad-auth-demo .
-   docker run --rm -it --env-file .env azure-ad-auth-demo
-   ```
 
 ## Authentication Flow
 
@@ -152,7 +155,7 @@ The application demonstrates several Microsoft Graph API capabilities:
 - **Environment**: Copy `.env.template` to `.env` and fill in your values
 - **Dependencies**: Update `requirements.txt` and rebuild container as needed
 
-## Security Notes
+## 🔒 Security Notes
 
 - Environment variables are used for sensitive configuration
 - Token cache is container-scoped
