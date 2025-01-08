@@ -1,6 +1,8 @@
 import os
 import msal
 import requests
+from datetime import datetime, timedelta
+import pytz
 
 # Retrieve CLIENT_ID and TENANT_ID from environment variables
 client_id = os.environ.get("CLIENT_ID")
@@ -35,14 +37,40 @@ print(flow["message"])  # Instructions for the user to go to https://microsoft.c
 # Acquire the token by completing the device code flow
 result = app.acquire_token_by_device_flow(flow)
 
+def create_calendar_event():
+    # Get local timezone
+    local_tz = datetime.now().astimezone().tzinfo
+    start_time = datetime.now() + timedelta(minutes=5)
+    end_time = start_time + timedelta(minutes=30)
+
+    event = {
+        "subject": "Study for the AZ-204 exam",
+        "body": {
+            "contentType": "HTML",
+            "content": "I've heard there's a good book from Packt for that."
+        },
+        "start": {
+            "dateTime": start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "timeZone": str(local_tz)
+        },
+        "end": {
+            "dateTime": end_time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "timeZone": str(local_tz)
+        },
+        "location": {
+            "displayName": "Wherever you are"
+        }
+    }
+    return event
+
 if "access_token" in result:
     access_token = result["access_token"]
+    headers = {"Authorization": f"Bearer {access_token}"}
 
     # ----------------------------------
     # 1. Get user profile (display name)
     # ----------------------------------
     graph_user_url = "https://graph.microsoft.com/v1.0/me"
-    headers = {"Authorization": f"Bearer {access_token}"}
     user_resp = requests.get(graph_user_url, headers=headers)
 
     if user_resp.status_code == 200:
@@ -84,6 +112,25 @@ if "access_token" in result:
             print("No upcoming events found.")
     else:
         print("Error fetching events:", events_resp.text)
+
+    # Create calendar event
+    try:
+        event_data = create_calendar_event()
+        events_url = "https://graph.microsoft.com/v1.0/me/events"
+        event_resp = requests.post(events_url, headers=headers, json=event_data)
+
+        if event_resp.status_code == 201:
+            created_event = event_resp.json()
+            print("Your meeting was created with the following details:")
+            print(f"Subject: {created_event['subject']}")
+            print(f"Location: {created_event['location']['displayName']}")
+            print(f"Start: {created_event['start']['dateTime']}")
+            print(f"End: {created_event['end']['dateTime']}\n")
+        else:
+            print("Error creating event:", event_resp.text)
+
+    except Exception as ex:
+        print(f"Error creating calendar event: {str(ex)}")
 
     # Optional: Print the tokens (like in your .NET example)
     print("ID Token:\n", result.get("id_token"), "\n")
