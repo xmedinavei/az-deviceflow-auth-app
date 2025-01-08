@@ -170,20 +170,34 @@ def main():
         if events := client.get_calendar_events():
             print("Your upcoming calendar events:")
             for idx, event in enumerate(events, start=1):
-                print(f"{idx}. Subject: {event.get('subject', 'No subject')}")
-                print(f"   Organizer: {event['organizer']['emailAddress'].get('name', 'Unknown')}")
-                print(f"   Start: {event['start'].get('dateTime')}")
-                print(f"   End:   {event['end'].get('dateTime')}\n")
+                # Skip duplicate line printing by combining into a single formatted string
+                subject = event.get('subject', 'No subject')
+                organizer = event['organizer']['emailAddress'].get('name', 'Unknown')
+                start_time = event['start'].get('dateTime', '').split('.')[0]  # Remove milliseconds
+                end_time = event['end'].get('dateTime', '').split('.')[0]      # Remove milliseconds
+                
+                # Format the event details
+                event_details = (
+                    f"{idx}. Subject: {subject}\n"
+                    f"   Organizer: {organizer}\n"
+                    f"   Start: {start_time}\n"
+                    f"   End:   {end_time}\n"
+                )
+                print(event_details)
         else:
             print("No upcoming events found.")
             
         # Create new event
         if created_event := client.create_calendar_event("Study for the AZ-204 exam"):
-            print("Your meeting was created with the following details:")
-            print(f"Subject: {created_event['subject']}")
-            print(f"Location: {created_event['location']['displayName']}")
-            print(f"Start: {created_event['start']['dateTime']}")
-            print(f"End: {created_event['end']['dateTime']}\n")
+            # Format the created event details in a single block
+            created_event_details = (
+                "Your meeting was created with the following details:\n"
+                f"Subject: {created_event['subject']}\n"
+                f"Location: {created_event['location']['displayName']}\n"
+                f"Start: {created_event['start']['dateTime'].split('.')[0]}\n"
+                f"End: {created_event['end']['dateTime'].split('.')[0]}\n"
+            )
+            print(created_event_details)
             
     except Exception as e:
         logger.error(f"Application error: {str(e)}")
