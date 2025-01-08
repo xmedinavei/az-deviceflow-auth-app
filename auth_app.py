@@ -32,6 +32,21 @@ class GraphConfig:
         )
 
 class GraphClient:
+    """A client for interacting with Microsoft Graph API.
+    This class provides functionality to authenticate users and interact with Microsoft Graph API
+    to access user profiles and manage calendar events.
+    Attributes:
+        config (GraphConfig): Configuration object containing client_id, tenant_id and scopes.
+        app (msal.PublicClientApplication): MSAL application instance for authentication.
+        access_token (Optional[str]): The OAuth access token for API requests.
+    Example:
+        ```
+        config = GraphConfig(client_id="xxx", tenant_id="xxx", scopes=["User.Read"])
+        client = GraphClient(config)
+        if client.authenticate():
+            profile = client.get_user_profile()
+        ```
+    """
     def __init__(self, config: GraphConfig):
         self.config = config
         self.app = msal.PublicClientApplication(
