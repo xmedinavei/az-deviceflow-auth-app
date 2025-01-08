@@ -67,6 +67,20 @@ After registration:
      - Calendars.ReadWrite (for viewing and creating calendar events)
    - Click "Grant admin consent"
 
+### Environment Setup
+
+1. In the root directory of the project, you'll find a `.env.template` file
+2. Create a new file named `.env` in the same directory
+3. Copy the contents from `.env.template` to `.env`
+4. Fill in your values from the Azure AD app registration:
+
+   ```env
+   CLIENT_ID=your-application-client-id
+   TENANT_ID=your-directory-tenant-id
+   ```
+
+> ⚠️ **Important**: The `.env` file is required for the application to work. Without proper credentials, the authentication will fail.
+
 ## Quick Start
 
 1. **Clone and Setup**:
