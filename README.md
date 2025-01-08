@@ -1,5 +1,11 @@
 # 🔐 Azure AD Authentication with MSAL and Microsoft Graph in Python
 
+[![Python](https://img.shields.io/badge/python-3.11-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Azure AD](https://img.shields.io/badge/Azure%20AD-Authentication-0078D4?style=flat&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/services/active-directory/)
+[![Docker](https://img.shields.io/badge/Docker-Container-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+[![MSAL](https://img.shields.io/badge/MSAL-Microsoft%20Auth-5E5E5E?style=flat&logo=microsoft&logoColor=white)](https://github.com/AzureAD/microsoft-authentication-library-for-python)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 > 🐳 Fully containerized solution for secure Microsoft Graph integration
 
 This project demonstrates Azure Active Directory (Azure AD) authentication using the Microsoft Authentication Library (MSAL) in a containerized Python console application. The app authenticates users, interacts with Microsoft Graph API to manage user data and calendar events.
@@ -166,12 +172,14 @@ The application demonstrates several Microsoft Graph API capabilities:
 
 Are you passionate about Cloud Infrastructure and Azure solutions? Let's connect and discuss more about:
 
+- Software Engineering
 - Cloud Architecture
-- Azure Development
-- Identity & Security
 - Infrastructure as Code
+- Generative AI
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/xmedinavei)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/xmedinavei)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/xmedinavei)
+[![Blog](https://img.shields.io/badge/Tech%20Blog-Read%20More-3B82F6?style=for-the-badge&logo=hashnode&logoColor=white)](https://xaviermedina.hashnode.dev/)
 
 > 💡 Feel free to reach out if you have questions about this project or want to discuss cloud infrastructure solutions!
 
