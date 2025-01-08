@@ -189,7 +189,6 @@ def main():
             
         # Create new event
         if created_event := client.create_calendar_event("Study for the AZ-204 exam"):
-            # Format the created event details in a single block
             created_event_details = (
                 "Your meeting was created with the following details:\n"
                 f"Subject: {created_event['subject']}\n"
