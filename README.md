@@ -10,6 +10,14 @@
 
 This project demonstrates Azure Active Directory (Azure AD) authentication using the Microsoft Authentication Library (MSAL) in a containerized Python console application. The app authenticates users, interacts with Microsoft Graph API to manage user data and calendar events.
 
+## 🎯 Key Benefits
+
+- **Secure Authentication**: Industry-standard OAuth 2.0 device flow
+- **Zero Setup**: Runs anywhere with Docker
+- **Automated Calendar**: Create and view events programmatically
+- **Enterprise Ready**: Built with Microsoft Graph API integration
+- **Type Safety**: Written in Python with type hints
+
 ## ✨ Features
 
 1. 🔑 Secure device code authentication flow
@@ -111,34 +119,47 @@ This application leverages **Microsoft Entra ID (Azure AD)** for secure user aut
    Microsoft Graph -> App: Returns requested data
    ```
 
-## 🚀 Quick Start
+## 🚀 Quick Start in 3 Steps
 
-1. **Clone and Setup**:
+### 1️⃣ Clone & Configure
 
-   ```bash
-   git clone <repository-url>
-   cd <repository-folder>
-   ```
+```bash
+# Clone the repository
+git clone <repository-url>
+cd <repository-folder>
 
-2. **Set Up Environment**:
+# Create environment file
+cp .env.template .env
+```
 
-   > ⚠️ **Critical Step**: Create `.env` from template and add your Azure credentials!
+### 2️⃣ Set Credentials
 
-   ```env
-   CLIENT_ID=your-client-id-from-azure-portal
-   TENANT_ID=your-tenant-id-from-azure-portal
-   ```
+Edit `.env` file with your Azure AD credentials:
 
-3. **Run with Docker**:
+```env
+CLIENT_ID=your-client-id-from-azure-portal
+TENANT_ID=your-tenant-id-from-azure-portal
+```
 
-   ```bash
-   docker build -t azure-ad-auth-demo .
-   docker run --rm -it --env-file .env azure-ad-auth-demo
-   ```
+### 3️⃣ Build & Run
+
+```bash
+# Build the Docker image
+docker build -t azure-ad-auth-demo .
+
+# Run the container
+docker run --rm -it --env-file .env azure-ad-auth-demo
+```
 
 ## 📋 Prerequisites
 
-### Azure AD App Registration
+### Required Tools
+
+- Docker Desktop
+- Azure Account
+- Text Editor (for .env configuration)
+
+### Azure AD Setup
 
 1. Go to [Azure Portal](https://portal.azure.com)
 2. Navigate to Microsoft Entra ID > App registrations
@@ -169,42 +190,22 @@ After registration:
      - Calendars.ReadWrite (for viewing and creating calendar events)
    - Click "Grant admin consent"
 
-### Environment Setup
+## 🔍 Implementation Details
 
-1. In the root directory of the project, you'll find a `.env.template` file
-2. Create a new file named `.env` in the same directory
-3. Copy the contents from `.env.template` to `.env`
-4. Fill in your values from the Azure AD app registration:
-
-   ```env
-   CLIENT_ID=your-application-client-id
-   TENANT_ID=your-directory-tenant-id
-   ```
-
-> ⚠️ **Important**: The `.env` file is required for the application to work. Without proper credentials, the authentication will fail.
-
-## Authentication Flow
-
-1. When you run the app, it will display a device code
-2. Open a browser and go to <https://microsoft.com/devicelogin>
-3. Enter the provided code
-4. Sign in with your Azure AD credentials
-5. Return to the console app to see your profile and calendar information
-
-## Project Structure
+### Project Structure
 
 ```text
 ├── assets/           # Project assets and diagrams
 │   └── msalapp-cloud-architecture.png
-├── .env              # Environment variables (git and docker ignored)
-├── .env.template     # Template for environment variables
-├── auth_app.py       # Main application
-├── requirements.txt  # Dependencies
+├── .env              # Environment variables (git ignored)
+├── .env.template     # Environment template
+├── auth_app.py       # Main application code
+├── requirements.txt  # Python dependencies
 ├── Dockerfile        # Container configuration
-└── README.md         # Documentation
+└── README.md        # This documentation
 ```
 
-## Microsoft Graph Features
+### Microsoft Graph Integration
 
 The application demonstrates several Microsoft Graph API capabilities:
 
@@ -225,19 +226,12 @@ The application demonstrates several Microsoft Graph API capabilities:
    - Token management and caching
    - Secure scope handling
 
-## Development Notes
+### Security Considerations
 
 - **Token Cache**: Located at `msal_token_cache.bin` (container-scoped)
 - **Security**: Credentials passed as runtime parameters
 - **Environment**: Copy `.env.template` to `.env` and fill in your values
 - **Dependencies**: Update `requirements.txt` and rebuild container as needed
-
-## 🔒 Security Notes
-
-- Environment variables are used for sensitive configuration
-- Token cache is container-scoped
-- The .env file is excluded from Docker builds
-- Public client flow is secured by Azure AD's device code flow
 
 ## 🤝 Let's Connect!
 
