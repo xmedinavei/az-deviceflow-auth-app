@@ -125,8 +125,8 @@ This application leverages **Microsoft Entra ID (Azure AD)** for secure user aut
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/xmedinavei/az-deviceflow-auth-app
+cd az-deviceflow-auth-app
 
 # Create environment file
 cp .env.template .env
@@ -145,10 +145,10 @@ TENANT_ID=your-tenant-id-from-azure-portal
 
 ```bash
 # Build the Docker image
-docker build -t azure-ad-auth-demo .
+docker build -t az-deviceflow-auth-app .
 
 # Run the container
-docker run --rm -it --env-file .env azure-ad-auth-demo
+docker run --rm -it --env-file .env az-deviceflow-auth-app
 ```
 
 ## 📋 Prerequisites
