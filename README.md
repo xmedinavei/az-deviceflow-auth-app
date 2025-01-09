@@ -55,7 +55,7 @@ End: 2023-12-01T15:35:00
 This application leverages **Microsoft Entra ID (Azure AD)** for secure user authentication and **Microsoft Graph API** for accessing Microsoft 365 resources. The app is containerized using Docker and uses the **Device Flow** authentication mechanism, allowing seamless communication between the user's device and Azure cloud services.
 
 <p align="center">
-   <img src="./assets/msalapp-cloud-achitecture-improved.png" alt="Cloud Architecture Diagram" width="600"/>
+   <img src="./assets/msalapp-cloud-achitecture-corrected.png" alt="Cloud Architecture Diagram" width="600"/>
 </p>
 
 <p align="center">
