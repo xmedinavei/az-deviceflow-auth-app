@@ -248,4 +248,16 @@ Are you passionate about Cloud Infrastructure and Azure solutions? Let's connect
 
 > 💡 Feel free to reach out if you have questions about this project or want to discuss cloud infrastructure solutions!
 
+## 📚 Further Learning
+
+### Microsoft Official Documentation
+
+- [Implement Microsoft Identity](https://learn.microsoft.com/training/paths/implement-microsoft-identity/) | [Authentication Flows](https://learn.microsoft.com/training/modules/implement-authentication-by-using-microsoft-authentication-library/) | [Microsoft Graph Fundamentals](https://learn.microsoft.com/training/paths/m365-msgraph-fundamentals/) | [Device Code Flow](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code) | [App Registration Guide](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app) | [Authentication Flows](https://learn.microsoft.com/azure/active-directory/develop/authentication-flows-app-scenarios) | [Graph API Reference](https://learn.microsoft.com/graph/api/overview?view=graph-rest-1.0) | [Calendar API](https://learn.microsoft.com/graph/api/resources/calendar?view=graph-rest-1.0) | [Python SDK Guide](https://learn.microsoft.com/graph/sdks/sdk-installation?tabs=pip#install-the-microsoft-graph-python-sdk) | [Identity Security](https://learn.microsoft.com/security/identity-access/overview-identity-access-security-best-practices)
+
+### Hands-on Labs & Samples
+
+- [Build Python Apps with Microsoft Graph](https://learn.microsoft.com/graph/tutorials/python) | [Secure Python Apps with Identity](https://learn.microsoft.com/azure/active-directory/develop/tutorial-v2-python-webapp) | [Graph Training Module](https://learn.microsoft.com/training/modules/msgraph-python-apps/) | [Python Daemon Sample](https://github.com/Azure-Samples/ms-identity-python-daemon) | [Python WebApp Sample](https://github.com/Azure-Samples/ms-identity-python-webapp) | [Graph Python SDK](https://github.com/microsoftgraph/msgraph-sdk-python)
+
+> 💡 **Pro Tip**: Start with Microsoft Learn paths for structured learning, then dive into hands-on labs for practical experience.
+
 For more details about MSAL, see [MSAL Python Documentation](https://github.com/AzureAD/microsoft-authentication-library-for-python)
