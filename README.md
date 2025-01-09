@@ -42,6 +42,69 @@ Start: 2023-12-01T15:05:00
 End: 2023-12-01T15:35:00
 ```
 
+## 🏗️ Application Architecture
+
+This application leverages **Microsoft Entra ID (Azure AD)** for secure user authentication and **Microsoft Graph API** for accessing Microsoft 365 resources. The app is containerized using Docker and uses the **Device Flow** authentication mechanism, allowing seamless communication between the user's device and Azure cloud services.
+
+![Cloud Architecture](./assets/msalapp-cloud-achitecture.png)
+
+### Cloud Components
+
+#### 1. Microsoft Entra ID (Azure AD)
+
+- **Authentication and Token Issuance**:
+  - Handles user authentication using the **Device Flow**
+  - Issues:
+    - **Access Token**: For Microsoft Graph API access
+    - **ID Token**: For user identity validation
+    - **Refresh Token**: For token renewal
+
+#### 2. App Registration
+
+- **Purpose**: Defines app identity and permissions
+- **Key Configuration**:
+  - Public Client Flow enabled
+  - API Permissions:
+    - `User.Read`: Profile access
+    - `Calendars.ReadWrite`: Calendar management
+
+#### 3. Microsoft Graph API
+
+- **Data Access Layer**:
+  - Profile data via `/me` endpoint
+  - Calendar management via `/me/events` endpoint
+
+### Application Flow
+
+1. **Initial Request** 🔄
+
+   ```plaintext
+   App -> Azure AD: Request device code
+   Azure AD -> App: Returns code + verification URL
+   ```
+
+2. **User Authentication** 🔐
+
+   ```plaintext
+   User -> Browser: Opens microsoft.com/devicelogin
+   User -> Browser: Enters device code
+   Browser -> Azure AD: Completes authentication
+   ```
+
+3. **Token Acquisition** 🎟️
+
+   ```plaintext
+   App -> Azure AD: Polls for tokens
+   Azure AD -> App: Returns access & refresh tokens
+   ```
+
+4. **API Integration** 📡
+
+   ```plaintext
+   App + Access Token -> Microsoft Graph: API requests
+   Microsoft Graph -> App: Returns requested data
+   ```
+
 ## 🚀 Quick Start
 
 1. **Clone and Setup**:
